@@ -1,4 +1,3 @@
-# LS Product Studio
 
 ระบบจัดการสินค้า นำเข้า Excel แสดงข้อมูลผ่าน QR และสรุปยอดเปิดหน้าสินค้า สร้างด้วย React + Vite + TypeScript, Firebase Authentication, Firestore, Storage และ Cloud Functions
 
