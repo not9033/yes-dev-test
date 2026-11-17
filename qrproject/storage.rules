@@ -1,0 +1,22 @@
+rules_version = '2';
+// Admin uploads require an active account in Firestore.
+service firebase.storage {
+  match /b/{bucket}/o {
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.role in ['admin', 'superAdmin']
+        && firestore.exists(/databases/(default)/documents/users/$(request.auth.uid))
+        && firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.status == 'active'
+        && firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.role == request.auth.token.role;
+    }
+    match /products/{productId}/{fileId} {
+      allow read: if true;
+      allow create: if isAdmin()
+        && request.resource.size <= 2 * 1024 * 1024
+        && request.resource.contentType.matches('image/(jpeg|png|webp)');
+      allow update: if false;
+      allow delete: if isAdmin();
+    }
+    match /{allPaths=**} { allow read, write: if false; }
+  }
+}
